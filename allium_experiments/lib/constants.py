@@ -1,7 +1,9 @@
 import yaml
 from conformist import PredictionDataset
-from allium.subtype import Subtype
-from allium.modality import GEX
+from allium import Subtype
+from allium import GEX
+
+print(Subtype)
 
 EXCLUDE_ALLIUM_SUBTYPES = ['low HeH', 'Control']
 ALLIUM_SUBTYPES = [subtype for subtype in Subtype.subtypes(GEX)
@@ -13,9 +15,9 @@ KNOWN_PRIMARY_CLASS_COL = f'{KNOWN_CLASSES_COL}_1'
 KNOWN_SECONDARY_CLASS_COL = f'{KNOWN_CLASSES_COL}_2'
 
 # DEFINE ALLIUM PREDICTION FILES #
-ALLIUM_DIR = 'experiments/allium'
+ALLIUM_DIR = 'allium_experiments'
 ALLIUM_LIB_DIR = f'{ALLIUM_DIR}/lib'
-DATA_DIR = 'experiments/data'
+DATA_DIR = 'data'
 ALLIUM_PREDICTIONS_DIR = f'{DATA_DIR}/raw_predictions'
 ALLIUM_PHENOTYPES_DIR = f'{DATA_DIR}/phenotypes'
 
@@ -26,13 +28,15 @@ JUDE_PHENOTYPE_TSV = f'{ALLIUM_PHENOTYPES_DIR}/phenotypes_jude.tsv'
 JUDE_TO_ALLIUM_SUBTYPE_YML = f'{ALLIUM_LIB_DIR}/jude_to_allium_subtypes.yml'
 VALIDATION_PHENOTYPE_CSV = \
     f'{ALLIUM_PHENOTYPES_DIR}/phenotypes_finland_totxvi_krali.csv'
+VALIDATION_PHENOTYPE_LILLJEBJORN_CSV = \
+    f'{ALLIUM_PHENOTYPES_DIR}/phenotypes_lilljebjorn.csv'
 
 # Load subtype mapping
 with open(JUDE_TO_ALLIUM_SUBTYPE_YML, 'r') as f:
     JUDE_TO_ALLIUM_SUBTYPE_DICT = yaml.safe_load(f)
 
 # Display dict
-DISPLAY_SUBTYPES_YML = 'experiments/lib/allium_to_icc_subtypes.yml'
+DISPLAY_SUBTYPES_YML = 'lib/allium_to_icc_subtypes.yml'
 with open(DISPLAY_SUBTYPES_YML, 'r') as f:
     DISPLAY_SUBTYPES_DICT = yaml.safe_load(f)
 
@@ -57,10 +61,14 @@ ALLIUM_PREDICTIONS_REPLICATES_COHORT = \
     f'{ALLIUM_PREDICTIONS_DIR}/allium_predictions_krali_replicates.csv'
 ALLIUM_PREDICTIONS_KRALI_UNKNOWN_COHORT = \
     f'{ALLIUM_PREDICTIONS_DIR}/allium_predictions_krali_unknown_subtype.csv'
+ALLIUM_PREDICTION_LILLJEBJORN_COHORT = \
+    f'{ALLIUM_PREDICTIONS_DIR}/allium_predictions_lilljebjorn.csv'
 FORMATTED_PREDICTIONS_VALIDATION = \
     f'{FORMATTED_PREDICTIONS_DIR}/allium_predictions_KRALI_FINLAND_TOTXVI.csv'
 FORMATTED_PREDICTIONS_UNKNOWNS = \
     f'{FORMATTED_PREDICTIONS_DIR}/allium_predictions_UNKNOWNS.csv'
+FORMATTED_PREDICTIONS_LILLJEBJORN = \
+    f'{FORMATTED_PREDICTIONS_DIR}/allium_predictions_LILLJEBJORN.csv'
 
 UPSET_PLOT_SOURCE = \
     f'{FORMATTED_PREDICTIONS_DIR}/upset_allcop_allium.csv'
