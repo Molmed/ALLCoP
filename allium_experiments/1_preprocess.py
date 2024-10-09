@@ -9,9 +9,11 @@ from lib.constants import (ALLIUM_PREDICTIONS_JUDE_COHORT,
                            ALLIUM_PREDICTIONS_HOLDOUT_COHORT,
                            ALLIUM_PREDICTIONS_REPLICATES_COHORT,
                            ALLIUM_PREDICTION_LILLJEBJORN_COHORT,
+                           ALLIUM_PREDICTION_TRAN_COHORT,
                            JUDE_PHENOTYPE_TSV,
                            VALIDATION_PHENOTYPE_CSV,
                            VALIDATION_PHENOTYPE_LILLJEBJORN_CSV,
+                           VALIDATION_PHENOTYPE_TRAN_CSV,
                            OUTPUT_DIR,
                            FORMATTED_PREDICTIONS_DIR)
 
@@ -66,7 +68,15 @@ apl = AlliumDataPreprocessor(ALLIUM_PREDICTION_LILLJEBJORN_COHORT,
                              'LILLJEBJORN',
                              id_col='public_id',
                              known_class_df=known_subtypes_lilljebjorn)
-apd.append_dataset(apl, 'KRALI_FINLAND_TOTXVI_LILLJEBJORN')
+apd.append_dataset(apl)
+
+known_subtypes_tran = pd.read_csv(VALIDATION_PHENOTYPE_TRAN_CSV)
+apt = AlliumDataPreprocessor(ALLIUM_PREDICTION_TRAN_COHORT,
+                             'TRAN',
+                             id_col='public_id',
+                             known_class_df=known_subtypes_tran)
+apd.append_dataset(apt, 'KRALI_FINLAND_TOTXVI_LILLJEBJORN_TRAN')
+
 
 # Remove the B-other rows
 apd.df = apd.df[apd.df['known_class'] != 'B-other']
