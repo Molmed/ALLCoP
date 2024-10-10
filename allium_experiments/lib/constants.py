@@ -3,8 +3,6 @@ from conformist import PredictionDataset
 from allium import Subtype
 from allium import GEX
 
-print(Subtype)
-
 EXCLUDE_ALLIUM_SUBTYPES = ['low HeH', 'Control']
 ALLIUM_SUBTYPES = [subtype for subtype in Subtype.subtypes(GEX)
                    if subtype not in EXCLUDE_ALLIUM_SUBTYPES]

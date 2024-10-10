@@ -11,7 +11,7 @@ ALLIUM_SUBTYPES = [subtype for subtype in Subtype.subtypes(GEX)
 
 EXPERIMENTS_DIR = 'experiments/allcatchr'
 LIB_DIR = f'{EXPERIMENTS_DIR}/lib'
-DATA_DIR = 'experiments/data'
+DATA_DIR = f'{EXPERIMENTS_DIR}/data'
 PREDICTIONS_DIR = f'{DATA_DIR}/raw_predictions'
 PHENOTYPES_DIR = f'{DATA_DIR}/phenotypes'
 
