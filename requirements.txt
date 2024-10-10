@@ -1,4 +1,4 @@
--e git+ssh://git@github.com/Molmed/allium.git@0eab95332794cfe1723a5dfb0d4d27b2069cfc69#egg=allium
+-e git+ssh://git@github.com/Molmed/allium.git@c1a4542cb158044064e01419be5ad8f752acb242#egg=allium
 -e git+ssh://git@github.com/Molmed/conformist.git@a3768859762e05fd6937d2fbb7d19f64d9f46df9#egg=conformist
 contourpy==1.1.1
 cycler==0.12.1

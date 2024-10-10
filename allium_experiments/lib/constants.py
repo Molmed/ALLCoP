@@ -36,7 +36,7 @@ with open(JUDE_TO_ALLIUM_SUBTYPE_YML, 'r') as f:
     JUDE_TO_ALLIUM_SUBTYPE_DICT = yaml.safe_load(f)
 
 # Display dict
-DISPLAY_SUBTYPES_YML = 'lib/allium_to_icc_subtypes.yml'
+DISPLAY_SUBTYPES_YML = f'{ALLIUM_LIB_DIR}/allium_to_icc_subtypes.yml'
 with open(DISPLAY_SUBTYPES_YML, 'r') as f:
     DISPLAY_SUBTYPES_DICT = yaml.safe_load(f)
 
