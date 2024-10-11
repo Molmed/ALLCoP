@@ -24,3 +24,42 @@ datasets:
     description: "EGAS00001001795, PMID: 27265895"
   - id: "TRAN"
     description: "GSE181157, PMID: 34933343"
+subtypes:
+  - id: aneuploidy
+  - id: hyperdiploid
+    parent_id: aneuploidy
+    aliases: ["HeH"]
+  - id: low hyperdiploid
+    parent_id: aneuploidy
+    aliases: ["low HeH"]
+  - id: hypodiploid
+    parent_id: aneuploidy
+    aliases: ["Hypo"]
+  - id: iAMP21
+    parent_id: aneuploidy
+  - id: ph-group
+  - id: BCR::ABL1
+    parent_id: ph-group
+    aliases: ["t(9;22)"]
+  - id: BCR::ABL1-like
+    parent_id: ph-group
+    aliases: ["ph-like"]
+  - id: ETV6-group
+  - id: ETV6::RUNX1
+    parent_id: ETV6-group
+    aliases: ["t(12;21)"]
+  - id: ETV6::RUNX1-like
+    parent_id: ETV6-group
+    aliases: ["t(12;21)-like"]
+  - id: T-ALL
+  - id: DUX4-r
+  - id: PAX5-alt
+  - id: KMT2A-r
+    aliases: ["11q23/MLL"]
+  - id: ZNF384-r
+  - id: TCF3::PBX1
+    aliases: ["t(1;19)"]
+  - id: MEF2D-r
+  - id: PAX5 P80R
+    aliases: ["PAX5 p.Pro80Arg"]
+  - id: NUTM1-r
