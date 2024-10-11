@@ -25,6 +25,7 @@ datasets:
   - id: "TRAN"
     description: "GSE181157, PMID: 34933343"
 subtypes:
+  - id: B-other
   - id: aneuploidy
   - id: hyperdiploid
     parent_id: aneuploidy
