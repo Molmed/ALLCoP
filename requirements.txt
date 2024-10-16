@@ -1,8 +1,7 @@
-# Editable install with no version control (allium==2.1.0)
--e /home/mariya/Development/ALLCoP/src/allium
 bumpver==2023.1129
 click==8.1.7
 colorama==0.4.6
+-e git+ssh://git@github.com/Molmed/allium_prepro.git@736905d248878703fd0ad2ad88d3f992a41c36bc#egg=allium_prepro
 -e git+ssh://git@github.com/Molmed/conformist.git@a3768859762e05fd6937d2fbb7d19f64d9f46df9#egg=conformist
 contourpy==1.1.1
 cycler==0.12.1

@@ -1,6 +1,6 @@
 import pandas as pd
 from conformist import PredictionDataset, PredictionDataPreprocessor
-from .constants import ALLIUM_SUBTYPES
+from allium_prepro.subtype_thesaurus import SubtypeThesaurus
 
 
 class AlliumDataPreprocessor(PredictionDataPreprocessor):
@@ -9,7 +9,14 @@ class AlliumDataPreprocessor(PredictionDataPreprocessor):
                  dataset_name,
                  id_col=PredictionDataset.ID_COL,
                  predicted_class_col='GEX_subtype_V2',
-                 known_class_df=None):
+                 known_class_col='subtype'):
+
+        if known_class_col:
+            data = pd.read_csv(predictions_csv)
+            known_class_df = pd.read_csv(predictions_csv)[[id_col, known_class_col]]
+            # Rename known_class_col to PredictionDataset.KNOWN_CLASS_COL
+            known_class_df = known_class_df.rename(
+                columns={known_class_col: PredictionDataset.KNOWN_CLASS_COL})
 
         super().__init__(model_name='allium',
                          predictions_csv=predictions_csv,
@@ -17,6 +24,9 @@ class AlliumDataPreprocessor(PredictionDataPreprocessor):
                          id_col=id_col,
                          predicted_class_col=predicted_class_col,
                          known_classes_df=known_class_df)
+
+        st = SubtypeThesaurus()
+        ALLIUM_SUBTYPES = st._allium_subtypes
 
         # Replace 'no_class' in predicted_class with empty string
         self.df[PredictionDataset.PREDICTED_CLASS_COL] = \
