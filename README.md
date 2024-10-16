@@ -1,4 +1,4 @@
-# ALLCoP
+# ALLCoP 1.0.0
 
 ALLCoP is an implementation of conformal prediction for RNA-seq acute lymphoblastic leukemia (ALL) subtyping classifiers.
 
