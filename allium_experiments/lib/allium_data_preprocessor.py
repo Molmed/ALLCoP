@@ -11,12 +11,11 @@ class AlliumDataPreprocessor(PredictionDataPreprocessor):
                  predicted_class_col='GEX_subtype_V2',
                  known_class_col='subtype'):
 
+        known_class_df = None
         if known_class_col:
-            data = pd.read_csv(predictions_csv)
-            known_class_df = data[[id_col, known_class_col]]
-            # Rename known_class_col to PredictionDataset.KNOWN_CLASS_COL
-            known_class_df = known_class_df.rename(
-                columns={known_class_col: PredictionDataset.KNOWN_CLASS_COL})
+            known_class_df = self._process_known_col(predictions_csv,
+                                                     id_col,
+                                                     known_class_col)
 
         super().__init__(model_name='allium',
                          predictions_csv=predictions_csv,
@@ -58,3 +57,31 @@ class AlliumDataPreprocessor(PredictionDataPreprocessor):
         self.df = pd.merge(self.df,
                            proba_df,
                            on=PredictionDataset.ID_COL)
+
+    def _process_known_col(self,
+                           predictions_csv, id_col, known_class_col):
+        data = pd.read_csv(predictions_csv)
+        known_class_df = data[[id_col, known_class_col]]
+        # Rename known_class_col to PredictionDataset.KNOWN_CLASS_COL
+        known_class_df = known_class_df.rename(
+            columns={known_class_col: PredictionDataset.KNOWN_CLASS_COL})
+
+        def _process_unknown_subtypes(x):
+            subtypes = []
+            for subtype in x.split(','):
+                # If subtype starts with "UNRECOGNIZED", continue
+                if subtype.startswith('UNRECOGNIZED'):
+                    continue
+                subtypes.append(subtype)
+            # If subtypes empty, return ""
+            if not subtypes:
+                return None
+            return ','.join(subtypes)
+
+        # Loop through known_class_df and split known_class_col
+        # into known_class and known_subtype
+        known_class_df[PredictionDataset.KNOWN_CLASS_COL] = known_class_df[
+            PredictionDataset.KNOWN_CLASS_COL].apply(_process_unknown_subtypes)
+
+        return known_class_df
+

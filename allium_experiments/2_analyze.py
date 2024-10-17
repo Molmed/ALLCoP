@@ -7,6 +7,7 @@ from lib.constants import FORMATTED_PREDICTIONS_FILE, OUTPUT_DIR
 apd = PredictionDataset(predictions_csv=FORMATTED_PREDICTIONS_FILE,
                         dataset_col_name='dataset')
 
+print(apd.df)
 # Get class counts and prediction heatmap
 apd.run_reports(OUTPUT_DIR)
 
