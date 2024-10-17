@@ -1,8 +1,5 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
-
-from .constants import (KNOWN_PRIMARY_CLASS_COL,
-                        KNOWN_SECONDARY_CLASS_COL)
 from conformist import OutputDir, PredictionDataset
 
 
@@ -31,19 +28,19 @@ class DualSubtypeHeatmap(OutputDir):
 
     def visualize(self):
         # Convert nans to empty strings
-        self.df[KNOWN_SECONDARY_CLASS_COL] = \
+        self.df[DualSubtypeHeatmap.KNOWN_SECONDARY_SUBTYPE_COL] = \
             self.df[
-                KNOWN_SECONDARY_CLASS_COL].fillna('')
+                DualSubtypeHeatmap.KNOWN_SECONDARY_SUBTYPE_COL].fillna('')
 
         # Get all rows with non-empty secondary subtypes
         df_non_empty_secondary = self.df[
             self.df[
-                KNOWN_SECONDARY_CLASS_COL] != '']
+                DualSubtypeHeatmap.KNOWN_SECONDARY_SUBTYPE_COL] != '']
 
         # Create a new DataFrame with the specified columns
         new_df = df_non_empty_secondary[[
-            KNOWN_PRIMARY_CLASS_COL,
-            KNOWN_SECONDARY_CLASS_COL]].copy()
+            DualSubtypeHeatmap.KNOWN_PRIMARY_SUBTYPE_COL,
+            DualSubtypeHeatmap.KNOWN_SECONDARY_SUBTYPE_COL]].copy()
 
         # Rename the columns
         new_df.columns = [self.label_y, self.label_x]
