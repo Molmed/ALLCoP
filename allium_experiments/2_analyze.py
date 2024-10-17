@@ -1,15 +1,10 @@
 from conformist import AlphaSelector, \
     FNRCoP, PredictionDataset, ModelVsCopFNR
 
-# Constants
-from lib.constants import (JUDE_EXPERIMENTS_OUTPUT_DIR,
-                           FORMATTED_PREDICTIONS_JUDE,
-                           DISPLAY_SUBTYPES_DICT)
 from lib.dual_subtype_heatmap import DualSubtypeHeatmap
 
 # Read in formatted predictions
-apd = PredictionDataset('JUDE',
-                        predictions_csv=FORMATTED_PREDICTIONS_JUDE,
+apd = PredictionDataset(predictions_csv=FORMATTED_PREDICTIONS_JUDE,
                         display_classes=DISPLAY_SUBTYPES_DICT)
 
 # Get class counts and prediction heatmap
