@@ -19,7 +19,7 @@ cal_pd = PredictionDataset(df=calibration, dataset_col_name='dataset')
 val_pd = PredictionDataset(df=validation, dataset_col_name='dataset')
 
 # CALIBRATE CONFORMAL PREDICTOR #
-mcp = FNRCoP(cal_pd, alpha=0.15)
+mcp = FNRCoP(cal_pd, alpha=0.2)
 mcp.calibrate()
 
 # PREDICT #
