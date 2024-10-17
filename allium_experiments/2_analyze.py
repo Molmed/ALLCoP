@@ -1,15 +1,16 @@
 from conformist import AlphaSelector, \
     FNRCoP, PredictionDataset, ModelVsCopFNR
-
-from lib.dual_subtype_heatmap import DualSubtypeHeatmap
+# from lib.dual_subtype_heatmap import DualSubtypeHeatmap
+from lib.constants import FORMATTED_PREDICTIONS_FILE, OUTPUT_DIR
 
 # Read in formatted predictions
-apd = PredictionDataset(predictions_csv=FORMATTED_PREDICTIONS_JUDE,
-                        display_classes=DISPLAY_SUBTYPES_DICT)
+apd = PredictionDataset(predictions_csv=FORMATTED_PREDICTIONS_FILE,
+                        dataset_col_name='dataset')
 
 # Get class counts and prediction heatmap
-apd.run_reports(JUDE_EXPERIMENTS_OUTPUT_DIR)
+apd.run_reports(OUTPUT_DIR)
 
+exit()
 # Render dual-class heatmap
 dsh = DualSubtypeHeatmap(apd, JUDE_EXPERIMENTS_OUTPUT_DIR, 'Subtype 1', 'Subtype 2')
 dsh.visualize()

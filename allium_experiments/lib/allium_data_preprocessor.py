@@ -13,7 +13,7 @@ class AlliumDataPreprocessor(PredictionDataPreprocessor):
 
         if known_class_col:
             data = pd.read_csv(predictions_csv)
-            known_class_df = pd.read_csv(predictions_csv)[[id_col, known_class_col]]
+            known_class_df = data[[id_col, known_class_col]]
             # Rename known_class_col to PredictionDataset.KNOWN_CLASS_COL
             known_class_df = known_class_df.rename(
                 columns={known_class_col: PredictionDataset.KNOWN_CLASS_COL})
