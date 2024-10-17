@@ -26,7 +26,7 @@ class AlliumDataPreprocessor(PredictionDataPreprocessor):
                          known_classes_df=known_class_df)
 
         st = SubtypeThesaurus()
-        ALLIUM_SUBTYPES = st._allium_subtypes
+        ALLIUM_SUBTYPES = st.allium_subtypes()
 
         # Replace 'no_class' in predicted_class with empty string
         self.df[PredictionDataset.PREDICTED_CLASS_COL] = \
