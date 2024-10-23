@@ -18,14 +18,24 @@ validation = apd.df[apd.df['dataset'] != 'jude']
 cal_pd = PredictionDataset(df=calibration, dataset_col_name='dataset')
 val_pd = PredictionDataset(df=validation, dataset_col_name='dataset')
 
+# Print sizes of both datasets
+print(f'Calibration dataset size: {cal_pd.df.shape[0]}')
+print(f'Validation dataset size: {val_pd.df.shape[0]}')
+
 # CALIBRATE CONFORMAL PREDICTOR #
-mcp = FNRCoP(cal_pd, alpha=0.2)
+mcp = FNRCoP(cal_pd, alpha=0.15)
 mcp.calibrate()
 
 # PREDICT #
 formatted_predictions, run = mcp.predict(val_pd,
                                          OUTPUT_DIR_PREDICTION,
                                          validate=True)
+
+# Get all formatted_predictions with a comma in prediction_sets
+multiclass_sets = formatted_predictions[formatted_predictions['prediction_sets'].str.contains(',')]
+
+# Dump to csv
+multiclass_sets.to_csv(f'{OUTPUT_DIR_PREDICTION}/multiclass_sets.csv', index=False)
 
 # Run reports
 vt = ValidationTrial([run], mcp.class_names)
