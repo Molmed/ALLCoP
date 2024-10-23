@@ -9,7 +9,16 @@ class AlliumDataPreprocessor(PredictionDataPreprocessor):
                  dataset_name,
                  id_col=PredictionDataset.ID_COL,
                  predicted_class_col='GEX_subtype_V2',
-                 known_class_col='subtype'):
+                 known_class_col='subtype',
+                 subtypes_to_exclude=None):
+
+        st = SubtypeThesaurus()
+        self.ALLIUM_SUBTYPES = st.allium_subtypes()
+
+        # If subtypes_to_exclude is not None, remove them from self.ALLIUM_SUBTYPES
+        if subtypes_to_exclude:
+            print(f'Excluding subtypes: {subtypes_to_exclude}...')
+            self.ALLIUM_SUBTYPES = [subtype for subtype in self.ALLIUM_SUBTYPES if subtype not in subtypes_to_exclude]
 
         known_class_df = None
         if known_class_col:
@@ -23,9 +32,6 @@ class AlliumDataPreprocessor(PredictionDataPreprocessor):
                          id_col=id_col,
                          predicted_class_col=predicted_class_col,
                          known_classes_df=known_class_df)
-
-        st = SubtypeThesaurus()
-        ALLIUM_SUBTYPES = st.allium_subtypes()
 
         # Replace 'no_class' in predicted_class with empty string
         self.df[PredictionDataset.PREDICTED_CLASS_COL] = \
@@ -47,7 +53,7 @@ class AlliumDataPreprocessor(PredictionDataPreprocessor):
         proba_df = proba_df.rename(columns={id_col: PredictionDataset.ID_COL})
 
         # Retain only columns that are in ALLIUM_SUBTYPES
-        cols_to_keep = [PredictionDataset.ID_COL] + [col for col in proba_df.columns if col in ALLIUM_SUBTYPES]
+        cols_to_keep = [PredictionDataset.ID_COL] + [col for col in proba_df.columns if col in self.ALLIUM_SUBTYPES]
         proba_df = proba_df[cols_to_keep]
 
         # Make nans 0
@@ -71,6 +77,9 @@ class AlliumDataPreprocessor(PredictionDataPreprocessor):
             for subtype in x.split(','):
                 # If subtype starts with "UNRECOGNIZED", continue
                 if subtype.startswith('UNRECOGNIZED'):
+                    continue
+                # If subtype not in ALLIUM_SUBTYPES, continue
+                if subtype not in self.ALLIUM_SUBTYPES:
                     continue
                 subtypes.append(subtype)
             # If subtypes empty, return ""

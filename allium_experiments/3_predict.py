@@ -3,7 +3,10 @@ from conformist import FNRCoP, PredictionDataset, \
 
 from lib.constants import FORMATTED_PREDICTIONS_FILE, OUTPUT_DIR
 
-OUTPUT_DIR_PREDICTION = f'{OUTPUT_DIR}/prediction'
+# ALPHA = 0.15
+# ALPHA = 0.075
+ALPHA = 0.1
+OUTPUT_DIR_PREDICTION = f'{OUTPUT_DIR}/prediction_{ALPHA}'
 
 # Here, we use St. Judes data for calibration and then get prediction
 # sets for all of our validation cohorts
@@ -23,7 +26,7 @@ print(f'Calibration dataset size: {cal_pd.df.shape[0]}')
 print(f'Validation dataset size: {val_pd.df.shape[0]}')
 
 # CALIBRATE CONFORMAL PREDICTOR #
-mcp = FNRCoP(cal_pd, alpha=0.15)
+mcp = FNRCoP(cal_pd, alpha=ALPHA)
 mcp.calibrate()
 
 # PREDICT #

@@ -3,7 +3,8 @@ from conformist import AlphaSelector, \
 from lib.dual_subtype_heatmap import DualSubtypeHeatmap
 from lib.constants import FORMATTED_PREDICTIONS_FILE, OUTPUT_DIR
 
-OUTPUT_DIR_VALIDATION = f'{OUTPUT_DIR}/validation'
+ALPHA=0.15
+OUTPUT_DIR_VALIDATION = f'{OUTPUT_DIR}/validation_{ALPHA}'
 
 # Read in formatted predictions
 apd = PredictionDataset(predictions_csv=FORMATTED_PREDICTIONS_FILE,
@@ -24,7 +25,7 @@ avaf.run()
 avaf.run_reports()
 
 # Validation trial and reports
-mcp = FNRCoP(apd, alpha=0.15)
+mcp = FNRCoP(apd, alpha=ALPHA)
 trial = mcp.do_validation_trial(n_runs=10000)
 trial.run_reports(OUTPUT_DIR_VALIDATION)
 

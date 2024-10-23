@@ -5,6 +5,9 @@ from lib.constants import RAW_PREDICTIONS_DIR, \
     FORMATTED_PREDICTIONS_FILE, \
     FORMATTED_PREDICTIONS_FILE_B_OTHER
 
+print('Preprocessing raw predictions...')
+
+subtypes_to_exclude = ['Control', 'NUTM1-r', 'low hyperdiploid']
 
 raw_data_files = [
     f for f in os.listdir(RAW_PREDICTIONS_DIR) if f.endswith('.csv')]
@@ -15,7 +18,8 @@ for data_file in raw_data_files:
     dataset_name = data_file.split('.')[0]
     data_file_path = os.path.join(RAW_PREDICTIONS_DIR, data_file)
     adp = AlliumDataPreprocessor(data_file_path,
-                                 dataset_name)
+                                 dataset_name,
+                                 subtypes_to_exclude=subtypes_to_exclude)
     dataframes.append(adp.df)
 
 # Merge the dataframes
