@@ -3,8 +3,8 @@ from conformist import AlphaSelector, \
 from lib.dual_subtype_heatmap import DualSubtypeHeatmap
 from lib.constants import FORMATTED_PREDICTIONS_FILE, OUTPUT_DIR
 
-ALPHA=0.15
-OUTPUT_DIR_VALIDATION = f'{OUTPUT_DIR}/validation_{ALPHA}'
+
+OUTPUT_DIR_DATASET = f'{OUTPUT_DIR}/dataset'
 
 # Read in formatted predictions
 apd = PredictionDataset(predictions_csv=FORMATTED_PREDICTIONS_FILE,
@@ -12,23 +12,28 @@ apd = PredictionDataset(predictions_csv=FORMATTED_PREDICTIONS_FILE,
 
 
 # Get class counts and prediction heatmap
-apd.run_reports(OUTPUT_DIR_VALIDATION)
+apd.run_reports(OUTPUT_DIR_DATASET)
 
 # Alpha selection
-asel = AlphaSelector(apd, FNRCoP, OUTPUT_DIR_VALIDATION)
+asel = AlphaSelector(apd, FNRCoP, OUTPUT_DIR_DATASET)
 asel.run()
 asel.run_reports()
 
 # Compare Allium and FNRCoP performance
-avaf = ModelVsCopFNR(apd, FNRCoP, OUTPUT_DIR_VALIDATION)
+avaf = ModelVsCopFNR(apd, FNRCoP, OUTPUT_DIR_DATASET)
 avaf.run()
 avaf.run_reports()
 
-# Validation trial and reports
-mcp = FNRCoP(apd, alpha=ALPHA)
-trial = mcp.do_validation_trial(n_runs=10000)
-trial.run_reports(OUTPUT_DIR_VALIDATION)
-
 # Render dual-class heatmap
-dsh = DualSubtypeHeatmap(apd, OUTPUT_DIR_VALIDATION, 'Subtype 1', 'Subtype 2')
+dsh = DualSubtypeHeatmap(apd, OUTPUT_DIR_DATASET, 'Subtype 1', 'Subtype 2')
 dsh.visualize()
+
+ALPHAS = [0.1, 0.15, 0.2]
+
+for ALPHA in ALPHAS:
+    OUTPUT_DIR_VALIDATION = f'{OUTPUT_DIR}/validation_{ALPHA}'
+
+    # Validation trial and reports
+    mcp = FNRCoP(apd, alpha=ALPHA)
+    trial = mcp.do_validation_trial(n_runs=10000)
+    trial.run_reports(OUTPUT_DIR_VALIDATION)
