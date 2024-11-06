@@ -55,7 +55,7 @@ class PredictionComparison(OutputDir):
 
 
             # Create new df where there is a column for every subtype in allium subtypes
-            cols = ['known_class'] + softmax_columns + ['NO PREDICTION']
+            cols = ['known_class'] + list(softmax_columns) + ['NO PREDICTION']
             df_predicted_class = pd.DataFrame(columns=cols)
             df_prediction_sets = pd.DataFrame(columns=cols)
             df_passing_threshold = pd.DataFrame(columns=cols)
@@ -72,7 +72,7 @@ class PredictionComparison(OutputDir):
                     if not pclasses or pclasses[0] == '':
                         new_row['NO PREDICTION'] = 1
 
-                    for col in softmax_columns:
+                    for col in list(softmax_columns):
                         new_row[col] = 1 if col in pclasses else 0
                     new_row['known_class'] = row['known_class']
                     return new_row
