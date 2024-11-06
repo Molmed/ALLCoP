@@ -26,7 +26,7 @@ class PredictionComparison(OutputDir):
         softmax_passing_threshold = self.pred_df.copy()
         softmax_passing_threshold['passing_threshold'] = None
 
-        palettes = ["Blues", "YlOrBr", "icefire"]
+        palettes = ["Blues", "YlOrBr", "Greens"]
         # Create plot with three columns and two rows
         fig, axs = plt.subplots(nrows=3, ncols=3, figsize=(21, 21))
 
@@ -46,16 +46,23 @@ class PredictionComparison(OutputDir):
             # Get formatted predictions
             formatted_predictions = mcp.predict(prediction_dataset)
 
+            # print(formatted_predictions['known_class'].unique())
+
+
+            fpd = PredictionDataset(df=formatted_predictions, dataset_name='preds')
+            melted = fpd.melt()
+
             # Merge 'passing_threshold' column with vpd.df
-            formatted_predictions = formatted_predictions.merge(softmax_passing_threshold[['id', 'passing_threshold']],
+            formatted_predictions = melted.merge(softmax_passing_threshold[['id', 'passing_threshold']],
                                 on='id', how='left')
+
 
             # Replace NaN with empty string
             formatted_predictions['predicted_class'] = formatted_predictions['predicted_class'].fillna('')
 
 
             # Create new df where there is a column for every subtype in allium subtypes
-            cols = ['known_class'] + list(softmax_columns) + ['NO PREDICTION']
+            cols = ['melted_known_class'] + list(softmax_columns) + ['NO PREDICTION']
             df_predicted_class = pd.DataFrame(columns=cols)
             df_prediction_sets = pd.DataFrame(columns=cols)
             df_passing_threshold = pd.DataFrame(columns=cols)
@@ -74,7 +81,7 @@ class PredictionComparison(OutputDir):
 
                     for col in list(softmax_columns):
                         new_row[col] = 1 if col in pclasses else 0
-                    new_row['known_class'] = row['known_class']
+                    new_row['melted_known_class'] = row['melted_known_class']
                     return new_row
 
                 df_predicted_class = df_predicted_class._append(get_new_row(predicted_classes), ignore_index=True)
@@ -83,7 +90,7 @@ class PredictionComparison(OutputDir):
 
             def process_df(df):
                 # Group by known_class and sum
-                df = df.groupby('known_class').sum()
+                df = df.groupby('melted_known_class').sum()
 
                 # Sort the rows and columns
                 df.sort_index(axis=0, inplace=True)  # Sort rows
