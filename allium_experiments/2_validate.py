@@ -12,7 +12,9 @@ apd = PredictionDataset(predictions_csv=FORMATTED_PREDICTIONS_FILE,
 
 
 # Get class counts and prediction heatmap
-apd.run_reports(OUTPUT_DIR_DATASET)
+apd.run_reports(OUTPUT_DIR_DATASET,
+                upset_plot_color='#457b9d',
+                min_softmax_threshold=0.5)
 
 # Alpha selection
 asel = AlphaSelector(apd, FNRCoP, OUTPUT_DIR_DATASET)
