@@ -3,22 +3,21 @@ import os
 from lib.allium_data_preprocessor import AlliumDataPreprocessor
 from lib.constants import RAW_PREDICTIONS_DIR, \
     FORMATTED_PREDICTIONS_FILE, \
-    FORMATTED_PREDICTIONS_FILE_B_OTHER
+    FORMATTED_PREDICTIONS_FILE_B_OTHER, \
+    DATASET_METADATA
 
 print('Preprocessing raw predictions...')
 
 subtypes_to_exclude = ['Control', 'NUTM1-r', 'low hyperdiploid']
 
-raw_data_files = [
-    f for f in os.listdir(RAW_PREDICTIONS_DIR) if f.endswith('.csv')]
 dataframes = []
-for data_file in raw_data_files:
-    print(f'Processing {data_file}')
+for dataset in DATASET_METADATA:
+    print(f'Processing {dataset}')
     # Dataset name is data_file before the first dot
-    dataset_name = data_file.split('.')[0]
-    data_file_path = os.path.join(RAW_PREDICTIONS_DIR, data_file)
+    dataset_filename = f"{dataset['file_prefix']}.predictions.csv"
+    data_file_path = os.path.join(RAW_PREDICTIONS_DIR, dataset_filename)
     adp = AlliumDataPreprocessor(data_file_path,
-                                 dataset_name,
+                                 dataset['label'],
                                  subtypes_to_exclude=subtypes_to_exclude)
     dataframes.append(adp.df)
 
