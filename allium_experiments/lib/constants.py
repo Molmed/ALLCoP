@@ -13,8 +13,10 @@ with open(f'{script_dir}/datasets.yml', 'r') as file:
     DATASET_METADATA = dm['datasets']
 
 FORMATTED_PREDICTIONS_FILE = \
-    os.path.join(DATA_DIR, 'formatted_predictions.csv')
+    os.path.join(DATA_DIR, 'formatted_predictions_known_subtype.csv')
 FORMATTED_PREDICTIONS_FILE_B_OTHER = \
     os.path.join(DATA_DIR, 'formatted_predictions_b_other.csv')
+FORMATTED_PREDICTIONS_FILE_ALL = \
+    os.path.join(DATA_DIR, 'formatted_predictions_known_and_b_other.csv')
 
 OUTPUT_DIR = os.path.join(script_dir, '../../output')

@@ -31,7 +31,7 @@ avaf.run_reports()
 dsh = DualSubtypeHeatmap(apd, OUTPUT_DIR_DATASET, 'Subtype 1', 'Subtype 2')
 dsh.visualize()
 
-ALPHAS = [0.1, 0.15, 0.2]
+ALPHAS = [0.075, 0.1, 0.15]
 
 for ALPHA in ALPHAS:
     OUTPUT_DIR_VALIDATION = f'{OUTPUT_DIR}/validation_{ALPHA}'
