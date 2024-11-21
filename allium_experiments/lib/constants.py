@@ -40,5 +40,5 @@ COLOR_PALETTE = {'high hyperdiploid': '#0F4D92',
                  'BCR::ABL1-like': '#c5b0d5',
                  'DUX4-r': '#004953',
                  'ZNF384-r': '#8A496B',
-                 'B-other': '#7f7f7f',
-                 'multiclass': '#bcbd22'}
+                 'multiclass': '#FFD166',
+                 'B-other': '#d4cbb3'}
