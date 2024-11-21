@@ -1,7 +1,9 @@
 from conformist import AlphaSelector, \
     FNRCoP, PredictionDataset, ModelVsCopFNR
 from lib.dual_subtype_heatmap import DualSubtypeHeatmap
-from lib.constants import FORMATTED_PREDICTIONS_FILE, OUTPUT_DIR
+from lib.constants import FORMATTED_PREDICTIONS_FILE, \
+    OUTPUT_DIR, \
+    COLOR_PALETTE
 
 
 OUTPUT_DIR_DATASET = f'{OUTPUT_DIR}/dataset'
@@ -10,12 +12,12 @@ OUTPUT_DIR_DATASET = f'{OUTPUT_DIR}/dataset'
 apd = PredictionDataset(predictions_csv=FORMATTED_PREDICTIONS_FILE,
                         dataset_col_name='dataset')
 
-
 # Get class counts and prediction heatmap
 apd.run_reports(OUTPUT_DIR_DATASET,
                 upset_plot_color='#457b9d',
                 min_softmax_threshold=0.5,
-                primary_class_only_in_class_counts=True)
+                primary_class_only_in_class_counts=True,
+                custom_color_palette=COLOR_PALETTE)
 
 # Alpha selection
 asel = AlphaSelector(apd, FNRCoP, OUTPUT_DIR_DATASET)
