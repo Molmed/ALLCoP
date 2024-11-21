@@ -2,10 +2,10 @@ import pandas as pd
 import os
 from lib.allium_data_preprocessor import AlliumDataPreprocessor
 from lib.constants import RAW_PREDICTIONS_DIR, \
-    FORMATTED_PREDICTIONS_FILE, \
+    FORMATTED_PREDICTIONS_FILE_ALL, \
     FORMATTED_PREDICTIONS_FILE_B_OTHER, \
     FORMATTED_PREDICTIONS_FILE_MULTICLASS, \
-    FORMATTED_PREDICTIONS_FILE_ALL, \
+    FORMATTED_PREDICTIONS_FILE_SINGLECLASS, \
     DATASET_METADATA
 
 print('Preprocessing raw predictions...')
@@ -65,4 +65,4 @@ merged_df = merged_df[merged_df['known_class'] != 'B-other']
 # Dump remaining to csv
 print('Items with single known subtype:')
 print(merged_df)
-merged_df.to_csv(FORMATTED_PREDICTIONS_FILE, index=False)
+merged_df.to_csv(FORMATTED_PREDICTIONS_FILE_SINGLECLASS, index=False)
