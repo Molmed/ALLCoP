@@ -30,6 +30,7 @@ pc = PredictionComparison(OUTPUT_DIR_VAL, cal_pd, val_pd, alphas)
 pc.visualize()
 
 all_formatted_predictions = {}
+all_validation_runs = {}
 for alpha in alphas:
     mcp = FNRCoP(cal_pd, alpha=alpha)
     mcp.calibrate()
@@ -38,11 +39,11 @@ for alpha in alphas:
     alpha_str = str(alpha).replace('.', '')
     output_dir = f'{OUTPUT_DIR_VAL}/prediction_reports_{alpha_str}'
 
-    formatted_predictions = mcp.predict(val_pd,
-                                        output_dir,
-                                        validate=True)
+    formatted_predictions, validation_run = mcp.predict(val_pd,
+                                                        output_dir,
+                                                        validate=True)
     all_formatted_predictions[alpha] = formatted_predictions
+    all_validation_runs[alpha] = validation_run
 
 # Merge all formatted predictions
 pc.merge_prediction_sets(all_formatted_predictions)
-
