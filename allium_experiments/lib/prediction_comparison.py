@@ -64,9 +64,46 @@ class PredictionComparison(OutputDir):
         # Rename predicted class to 'model_predicted_class'
         merged = merged.rename(columns={'predicted_class': 'model_predicted_class'})
 
+        # Gather statistics
+        stats = {}
+
+        # How many rows in total?
+        stats['total_rows'] = merged.shape[0]
+
+        # Model correct in how many cases?
+        stats['model_correct'] = merged[merged['known_class'] == merged['model_predicted_class']].shape[0]
+
+        # How many empty model predictions?
+        # Check not just for empty string but all none values
+        # stats['model_empty'] = merged[merged['model_predicted_class'] == ''].shape[0]
+        stats['model_empty'] = merged[merged['model_predicted_class'].isnull()].shape[0]
+
+        # How many incorrect model predictions?
+        stats['model_incorrect'] = merged[merged['known_class'] != merged['model_predicted_class']].shape[0]
+
+        # How many incorrect or empty?
+        stats['model_incorrect_or_empty'] = stats['model_empty'] + stats['model_incorrect']
+
+        # Model FNR
+        stats['model_fnr'] = stats['model_incorrect_or_empty'] / stats['total_rows']
+
+        # For each alpha, how much was the error reduced?
+        # 'prediction_sets a={alpha}' is a comma separate string, so it should be searched
+        for alpha in self._alphas:
+            stats[f'alpha={alpha}_correct'] = merged.apply(
+                lambda row: row['known_class'] in row[f'prediction_sets a={alpha}'], axis=1
+            ).sum()
+
+            # FNR for alpha
+            stats[f'alpha={alpha}_fnr'] = 1 - (stats[f'alpha={alpha}_correct'] / stats['total_rows'])
+
+        # Save the stats
+        with open(f'{self.output_dir}/prediction_set_comparison_stats.txt', 'w') as f:
+            for key, value in stats.items():
+                f.write(f'{key}: {value}\n')
+
         # Save the merged dataset
         merged.to_csv(f'{self.output_dir}/prediction_set_comparison.csv', index=False)
-
 
     def visualize(self):
         if not self.output_dir:
