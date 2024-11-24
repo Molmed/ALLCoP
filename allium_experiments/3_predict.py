@@ -23,18 +23,26 @@ val_pd = PredictionDataset(df=validation, dataset_col_name='dataset')
 print(f'Calibration dataset size: {cal_pd.df.shape[0]}')
 print(f'Validation dataset size: {val_pd.df.shape[0]}')
 
+OUTPUT_DIR_VAL = f'{OUTPUT_DIR}/validation_singleclass'
+
 alphas = [0.075, 0.1, 0.15]
-pc = PredictionComparison(OUTPUT_DIR, cal_pd, val_pd, alphas)
+pc = PredictionComparison(OUTPUT_DIR_VAL, cal_pd, val_pd, alphas)
 pc.visualize()
 
+all_formatted_predictions = {}
 for alpha in alphas:
     mcp = FNRCoP(cal_pd, alpha=alpha)
     mcp.calibrate()
 
     # Remove dot from alpha
     alpha_str = str(alpha).replace('.', '')
-    output_dir = f'{OUTPUT_DIR}/prediction_reports_{alpha_str}'
+    output_dir = f'{OUTPUT_DIR_VAL}/prediction_reports_{alpha_str}'
 
     formatted_predictions = mcp.predict(val_pd,
                                         output_dir,
                                         validate=True)
+    all_formatted_predictions[alpha] = formatted_predictions
+
+# Merge all formatted predictions
+pc.merge_prediction_sets(all_formatted_predictions)
+

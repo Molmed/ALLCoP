@@ -11,13 +11,66 @@ class PredictionComparison(OutputDir):
                  calibration_dataset: PredictionDataset,
                  prediction_dataset: PredictionDataset,
                  alphas: list = [0.1, 0.15, 0.2]):
+        self.output_dir = None
         self._base_output_dir = base_output_dir
         self._calibration_dataset = calibration_dataset
         self._prediction_dataset = prediction_dataset
         self._alphas = alphas
 
+    def merge_prediction_sets(self, formatted_prediction_dict):
+        if not self.output_dir:
+            self.create_output_dir(self._base_output_dir)
+
+        prediction_set_cols = []
+        softmax_score_cols = []
+        # For each dataset, rename 'prediction_sets' to 'prediction_sets a={alpha}'
+        # And 'prediction_set_softmax_scores' to 'prediction_set_softmax_scores a={alpha}'
+        # Then add the new dataset to a list
+
+        # Sort formatted prediction dict by alpha decreasing
+        formatted_prediction_dict = dict(
+            sorted(formatted_prediction_dict.items(),
+                   key=lambda item: item[0], reverse=True))
+
+        datasets = []
+        for alpha, formatted_predictions in formatted_prediction_dict.items():
+            ps_col = f'prediction_sets a={alpha}'
+            ss_col = f'prediction_set_softmax_scores a={alpha}'
+            formatted_predictions = formatted_predictions.rename(columns={
+                'prediction_sets': ps_col,
+                'prediction_set_softmax_scores': ss_col
+            })
+            prediction_set_cols.append(ps_col)
+            softmax_score_cols.append(ss_col)
+            datasets.append(formatted_predictions)
+
+        # Join all datasets on id
+        merged = datasets[0]
+        for i in range(1, len(datasets)):
+            merged = merged.merge(datasets[i], on='id', how='left')
+
+        # Columns to keep
+        cols = (['dataset',
+                'id',
+                'known_class',
+                'predicted_class']
+                + prediction_set_cols
+                + ['known_class_softmax_scores']
+                + softmax_score_cols)
+
+        # Keep only the columns in cols
+        merged = merged[cols]
+
+        # Rename predicted class to 'model_predicted_class'
+        merged = merged.rename(columns={'predicted_class': 'model_predicted_class'})
+
+        # Save the merged dataset
+        merged.to_csv(f'{self.output_dir}/prediction_set_comparison.csv', index=False)
+
+
     def visualize(self):
-        self.create_output_dir(self._base_output_dir)
+        if not self.output_dir:
+            self.create_output_dir(self._base_output_dir)
 
         self.prediction_dataset = self._prediction_dataset
         self.calibration_dataset = self._calibration_dataset
