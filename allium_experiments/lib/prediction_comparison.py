@@ -11,11 +11,17 @@ class PredictionComparison(OutputDir):
                  calibration_dataset: PredictionDataset,
                  prediction_dataset: PredictionDataset,
                  alphas: list = [0.1, 0.15, 0.2]):
-        self.create_output_dir(base_output_dir)
+        self._base_output_dir = base_output_dir
+        self._calibration_dataset = calibration_dataset
+        self._prediction_dataset = prediction_dataset
+        self._alphas = alphas
 
-        self.prediction_dataset = prediction_dataset
-        self.calibration_dataset = calibration_dataset
-        self.pred_df = prediction_dataset.df
+    def visualize(self):
+        self.create_output_dir(self._base_output_dir)
+
+        self.prediction_dataset = self._prediction_dataset
+        self.calibration_dataset = self._calibration_dataset
+        self.pred_df = self._prediction_dataset.df
 
         # Get softmax scores columns
         softmax_columns = self.pred_df.columns[self.pred_df.columns.get_loc(
@@ -31,7 +37,7 @@ class PredictionComparison(OutputDir):
         fig, axs = plt.subplots(nrows=3, ncols=3, figsize=(21, 21))
 
         i_plt_row = 0
-        for alpha in alphas:
+        for alpha in self._alphas:
             for index, row in softmax_passing_threshold.iterrows():
                 cols_pass = []
                 for col in softmax_columns:
@@ -40,11 +46,11 @@ class PredictionComparison(OutputDir):
                 softmax_passing_threshold.at[index, 'passing_threshold'] = ','.join(cols_pass)
 
             # CALIBRATE CONFORMAL PREDICTOR #
-            mcp = FNRCoP(calibration_dataset, alpha=alpha)
+            mcp = FNRCoP(self._calibration_dataset, alpha=alpha)
             mcp.calibrate()
 
             # Get formatted predictions
-            formatted_predictions = mcp.predict(prediction_dataset)
+            formatted_predictions = mcp.predict(self._prediction_dataset)
 
             # print(formatted_predictions['known_class'].unique())
 
@@ -124,5 +130,3 @@ class PredictionComparison(OutputDir):
         plt.tight_layout(h_pad=5)
         plt.savefig(f'{self.output_dir}/comparison.png')
 
-    def visualize(self):
-        pass

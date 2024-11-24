@@ -25,6 +25,7 @@ print(f'Validation dataset size: {val_pd.df.shape[0]}')
 
 alphas = [0.075, 0.1, 0.15]
 pc = PredictionComparison(OUTPUT_DIR, cal_pd, val_pd, alphas)
+pc.visualize()
 
 for alpha in alphas:
     mcp = FNRCoP(cal_pd, alpha=alpha)
