@@ -94,8 +94,14 @@ class PredictionComparison(OutputDir):
                 lambda row: row['known_class'] in row[f'prediction_sets a={alpha}'], axis=1
             ).sum()
 
+            # How many incorrect?
+            stats[f'alpha={alpha}_incorrect'] = stats['total_rows'] - stats[f'alpha={alpha}_correct']
+
             # FNR for alpha
             stats[f'alpha={alpha}_fnr'] = 1 - (stats[f'alpha={alpha}_correct'] / stats['total_rows'])
+
+            # How many n cases fewer were incorrect?
+            stats[f'alpha={alpha}_error_reduction_n'] = stats['model_incorrect_or_empty'] - stats[f'alpha={alpha}_incorrect']
 
         # Save the stats
         with open(f'{self.output_dir}/prediction_set_comparison_stats.txt', 'w') as f:
