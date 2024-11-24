@@ -1,18 +1,20 @@
 from conformist import FNRCoP, PredictionDataset, \
     ValidationTrial
 
-from lib.constants import FORMATTED_PREDICTIONS_FILE, OUTPUT_DIR
+from lib.constants import FORMATTED_PREDICTIONS_FILE_SINGLECLASS, \
+    OUTPUT_DIR
 from lib.prediction_comparison import PredictionComparison
 
 # Here, we use St. Judes data for calibration and then get prediction
 # sets for all of our validation cohorts
 # Read in formatted predictions
-apd = PredictionDataset(predictions_csv=FORMATTED_PREDICTIONS_FILE,
+apd = PredictionDataset(predictions_csv=FORMATTED_PREDICTIONS_FILE_SINGLECLASS,
                         dataset_col_name='dataset')
 
 # Split the dataset into calibration and validation
-calibration = apd.df[apd.df['dataset'] == 'jude']
-validation = apd.df[apd.df['dataset'] != 'jude']
+jude_dataset_name = 'St. Jude Cloud (SJC-DS-1001, SJC-DS-1009)'
+calibration = apd.df[apd.df['dataset'] == jude_dataset_name]
+validation = apd.df[apd.df['dataset'] != jude_dataset_name]
 
 cal_pd = PredictionDataset(df=calibration, dataset_col_name='dataset')
 val_pd = PredictionDataset(df=validation, dataset_col_name='dataset')
@@ -35,11 +37,3 @@ for alpha in alphas:
     formatted_predictions = mcp.predict(val_pd,
                                         output_dir,
                                         validate=True)
-
-    # Get all formatted_predictions with a comma in prediction_sets
-    multiclass_sets = formatted_predictions[
-        formatted_predictions['prediction_sets'].str.contains(',')]
-
-    # Dump to csv
-    multiclass_sets.to_csv(
-        f'{output_dir}/multiclass_sets.csv', index=False)
