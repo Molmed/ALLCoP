@@ -112,6 +112,22 @@ class PredictionComparison(OutputDir):
             stats[f'alpha={alpha}_mean_set_size'] = merged[f'prediction_sets a={alpha}'].apply(
                 lambda x: len(x.split(',')) if x else 0).mean()
 
+            # Go through each row. For each row, check f'prediction_sets a={alpha}'
+            # Split it by string, if there is more than one class, count the classes in a dict
+            # If the known class is in the dict, increment the count
+            stats[f'alpha={alpha}_coocurring_classes'] = {}
+            stats[f'alpha={alpha}_n_multiple_predictions'] = 0
+            for index, row in merged.iterrows():
+                pred_set = row[f'prediction_sets a={alpha}'].split(',')
+                if len(pred_set) > 1:
+                    stats[f'alpha={alpha}_n_multiple_predictions'] += 1
+                    for class_ in pred_set:
+                        if class_ != row['known_class']:
+                            if stats[f'alpha={alpha}_coocurring_classes'].get(class_):
+                                stats[f'alpha={alpha}_coocurring_classes'][class_] += 1
+                            else:
+                                stats[f'alpha={alpha}_coocurring_classes'][class_] = 1
+
         # Save the stats
         with open(f'{self.output_dir}/prediction_set_comparison_stats.txt', 'w') as f:
             for key, value in stats.items():
