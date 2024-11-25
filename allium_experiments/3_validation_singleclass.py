@@ -43,7 +43,8 @@ for alpha in alphas:
                                                         output_dir,
                                                         validate=True)
     all_formatted_predictions[alpha] = formatted_predictions
-    all_validation_runs[alpha] = validation_run
+    all_validation_runs[alpha] = validation_run.run_reports(output_dir)
 
 # Merge all formatted predictions
 pc.merge_prediction_sets(all_formatted_predictions)
+pc.merge_stats(all_validation_runs)

@@ -124,11 +124,10 @@ class PredictionComparison(OutputDir):
         if not self.output_dir:
             self.create_output_dir(self._base_output_dir)
 
-        output_file = f'{self.output_dir}/stats_comparison.csv'
-
         mean_model_fnrs = None
         allcop_fnrs = {}
         allcop_set_sizes = {}
+        general_stats = {}
 
         for alpha, stats in stats_dict.items():
             mean_model_fnrs = pd.DataFrame.from_dict(
@@ -145,6 +144,11 @@ class PredictionComparison(OutputDir):
                 stats['mean_set_sizes'],
                 orient='index',
                 columns=[f'mean set size a={alpha}'])
+
+            general_stats[alpha] = pd.DataFrame.from_dict(
+                stats['general_stats'],
+                orient='index',
+                columns=[f'a={alpha}'])
 
         # Sort by mean model FNR
         mean_model_fnrs = mean_model_fnrs.sort_values(by='mean model FNR')
@@ -168,7 +172,20 @@ class PredictionComparison(OutputDir):
         allcop_fnrs_combined = allcop_fnrs_combined.sort_values(by=[f'mean model FNR'])
 
         # Save the combined DataFrame to a CSV file
-        allcop_fnrs_combined.to_csv(output_file, mode="w")
+        allcop_fnrs_combined.to_csv(
+            f'{self.output_dir}/stats_comparison_subtype.csv', mode="w")
+
+        # Now general stats...
+        # Sort general_stats by alpha decreasing
+        general_stats = dict(
+            sorted(general_stats.items(),
+                   key=lambda item: item[0], reverse=True))
+        # Combine them
+        general_stats_combined = pd.concat(list(general_stats.values()), axis=1)
+
+        # Save the combined DataFrame to a CSV file
+        general_stats_combined.to_csv(
+            f'{self.output_dir}/stats_comparison.csv', mode="w")
 
     def visualize(self):
         if not self.output_dir:
