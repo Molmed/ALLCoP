@@ -21,10 +21,22 @@ class AllcatchrDataPreprocessor(PredictionDataPreprocessor):
             print(f'Excluding subtypes: {subtypes_to_exclude}...')
             self.ALLIUM_SUBTYPES = [subtype for subtype in self.ALLIUM_SUBTYPES if subtype not in subtypes_to_exclude]
 
+        def _process_unknown_subtypes(x):
+            if x.startswith('UNRECOGNIZED') or x not in self.ALLIUM_SUBTYPES:
+                return ""
+            return x
+
         if pheno_file_path is not None:
             known_class_df = pd.read_csv(pheno_file_path, sep=';')
             # Rename subtype column to known_class
-            known_class_df = known_class_df.rename(columns={'subtype': 'known_class'})
+            known_class_df = known_class_df.rename(
+                columns={'subtype': PredictionDataset.KNOWN_CLASS_COL})
+
+            # Loop through known_class_df and split known_class_col
+            # into known_class and known_subtype
+            known_class_df[PredictionDataset.KNOWN_CLASS_COL] = known_class_df[
+                PredictionDataset.KNOWN_CLASS_COL].apply(
+                    _process_unknown_subtypes)
 
         super().__init__('allcatchr', predictions_tsv,
                          dataset_name, id_col, 'Prediction',
@@ -46,8 +58,9 @@ class AllcatchrDataPreprocessor(PredictionDataPreprocessor):
                 nn_col = f'NN_{class_name}'
                 # Translate class name
                 translated_class_name = st.translate(class_name)
-                proba_df[translated_class_name] = \
-                    (self.df_raw[col] + self.df_raw[nn_col]) / 2
+                if translated_class_name in self.ALLIUM_SUBTYPES:
+                    proba_df[translated_class_name] = \
+                        (self.df_raw[col] + self.df_raw[nn_col]) / 2
 
         # Translate all values in predicted class column
         self.df[PredictionDataset.PREDICTED_CLASS_COL] = \
@@ -67,4 +80,3 @@ class AllcatchrDataPreprocessor(PredictionDataPreprocessor):
         self.df = pd.merge(self.df,
                            proba_df,
                            on=PredictionDataset.ID_COL)
-

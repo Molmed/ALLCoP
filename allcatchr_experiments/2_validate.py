@@ -7,8 +7,9 @@ from lib.constants import FORMATTED_PREDICTIONS_FILE_ALL, \
 # Create reports for entire dataset
 apd = PredictionDataset(predictions_csv=FORMATTED_PREDICTIONS_FILE_ALL,
                         dataset_col_name='dataset')
-apd.create_reports_dir(f'{OUTPUT_DIR}/validation')
 
+# DATASET REPORTS
+apd.create_reports_dir(f'{OUTPUT_DIR}/validation')
 apd.visualize_class_counts_by_dataset(
     primary_class_only=True,
     custom_color_palette=COLOR_PALETTE)
@@ -31,14 +32,3 @@ asel.run_reports()
 avaf = ModelVsCopFNR(apd, FNRCoP, OUTPUT_DIR, n_runs_per_alpha=10000)
 avaf.run()
 avaf.run_reports()
-
-# ALPHAS = [0.075, 0.1, 0.15]
-# n_runs = 10000
-
-# for ALPHA in ALPHAS:
-#     OUTPUT_DIR_VALIDATION = f'{OUTPUT_DIR}/validation_{ALPHA}'
-
-#     # Validation trial and reports
-#     mcp = FNRCoP(apd_filtered, alpha=ALPHA)
-#     trial = mcp.do_validation_trial(n_runs=n_runs, val_proportion=0.1)
-#     trial.run_reports(OUTPUT_DIR_VALIDATION)

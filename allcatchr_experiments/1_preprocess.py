@@ -8,7 +8,7 @@ from lib.constants import RAW_PREDICTIONS_DIR, \
 
 print('Preprocessing raw predictions...')
 
-subtypes_to_exclude = ['Control', 'NUTM1-r', 'low hyperdiploid']
+subtypes_to_exclude = ['Control', 'NUTM1-r', 'low hyperdiploid', 'T-ALL']
 
 dataframes = []
 for dataset in DATASET_METADATA:
@@ -37,27 +37,20 @@ for dataset in DATASET_METADATA:
 # Merge the dataframes
 merged_df = pd.concat(dataframes)
 
-# Report all items where the known_class is empty
-print('Items with empty known_class:')
-print(merged_df[merged_df['known_class'].isnull()])
+# Drop all rows where known_class is empty string
+merged_df = merged_df[merged_df['known_class'] != '']
 
-# Drop all rows where known_class is empty
-merged_df = merged_df.dropna(subset=['known_class'])
-
-# Report all items where known_class begins with "UNRECOGNIZED"
-print('Items with known_class beginning with UNRECOGNIZED:')
-unrecognized = merged_df[merged_df['known_class'].str.startswith('UNRECOGNIZED')]
-print(unrecognized)
 # Drop all rows where known_class begins with "UNRECOGNIZED"
 merged_df = merged_df[~merged_df['known_class'].str.startswith('UNRECOGNIZED')]
 
-# Report all items where known_class is "B-other"
-print('Items with known_class as B-other:')
-b_others = merged_df[merged_df['known_class'] == 'B-other']
-print(b_others)
+# Remove the T-ALL subtype from the dataset
+merged_df = merged_df[merged_df['known_class'] != 'T-ALL']
 
 # Remove b-others from merged_df
 merged_df = merged_df[merged_df['known_class'] != 'B-other']
+
+# Remove all excluded classes
+merged_df = merged_df[~merged_df['known_class'].isin(subtypes_to_exclude)]
 
 # Dump all items except empty known class to csv
 print('All items with known and recognized subtype:')
