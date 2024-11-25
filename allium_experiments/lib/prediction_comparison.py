@@ -120,6 +120,46 @@ class PredictionComparison(OutputDir):
         # Save the merged dataset
         merged.to_csv(f'{self.output_dir}/prediction_set_comparison.csv', index=False)
 
+    def merge_stats(self, stats_dict):
+        if not self.output_dir:
+            self.create_output_dir(self._base_output_dir)
+
+        output_file = f'{self.output_dir}/stats_comparison.csv'
+
+        mean_model_fnrs = None
+        allcop_fnrs = {}
+
+        for alpha, stats in stats_dict.items():
+            mean_model_fnrs = pd.DataFrame.from_dict(
+                stats['mean_model_fnrs'],
+                orient='index',
+                columns=['mean model FNR'])
+
+            allcop_fnrs[alpha] = pd.DataFrame.from_dict(
+                stats['mean_fnrs'],
+                orient='index',
+                columns=[f'mean ALLCoP FNR a={alpha}'])
+
+        # Sort by mean model FNR
+        mean_model_fnrs = mean_model_fnrs.sort_values(by='mean model FNR')
+
+        # Sort allcop_fnrs by alpha decreasing
+        allcop_fnrs = dict(
+            sorted(allcop_fnrs.items(),
+                   key=lambda item: item[0], reverse=True))
+
+        for alpha, df in allcop_fnrs.items():
+            df = df.sort_values(by=f'mean ALLCoP FNR a={alpha}')
+
+        all_dfs = [mean_model_fnrs] + list(allcop_fnrs.values())
+        allcop_fnrs_combined = pd.concat(all_dfs, axis=1)
+
+        # Sort the combined DataFrame by the desired column
+        allcop_fnrs_combined = allcop_fnrs_combined.sort_values(by=[f'mean model FNR'])
+
+        # Save the combined DataFrame to a CSV file
+        allcop_fnrs_combined.to_csv(output_file, mode="w")
+
     def visualize(self):
         if not self.output_dir:
             self.create_output_dir(self._base_output_dir)
