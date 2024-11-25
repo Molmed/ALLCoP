@@ -99,7 +99,8 @@ class PredictionComparison(OutputDir):
         # 'prediction_sets a={alpha}' is a comma separate string, so it should be searched
         for alpha in self._alphas:
             stats[f'alpha={alpha}_correct'] = merged.apply(
-                lambda row: row['known_class'] in row[f'prediction_sets a={alpha}'].split(','), axis=1
+                lambda row: any(pred_class in row['known_class'].split(',') for pred_class in row[f'prediction_sets a={alpha}'].split(',')),
+                axis=1
             ).sum()
 
             # How many incorrect?
