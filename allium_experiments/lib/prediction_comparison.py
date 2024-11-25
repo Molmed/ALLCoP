@@ -128,6 +128,7 @@ class PredictionComparison(OutputDir):
 
         mean_model_fnrs = None
         allcop_fnrs = {}
+        allcop_set_sizes = {}
 
         for alpha, stats in stats_dict.items():
             mean_model_fnrs = pd.DataFrame.from_dict(
@@ -140,6 +141,11 @@ class PredictionComparison(OutputDir):
                 orient='index',
                 columns=[f'mean ALLCoP FNR a={alpha}'])
 
+            allcop_set_sizes[alpha] = pd.DataFrame.from_dict(
+                stats['mean_set_sizes'],
+                orient='index',
+                columns=[f'mean set size a={alpha}'])
+
         # Sort by mean model FNR
         mean_model_fnrs = mean_model_fnrs.sort_values(by='mean model FNR')
 
@@ -148,10 +154,14 @@ class PredictionComparison(OutputDir):
             sorted(allcop_fnrs.items(),
                    key=lambda item: item[0], reverse=True))
 
-        for alpha, df in allcop_fnrs.items():
-            df = df.sort_values(by=f'mean ALLCoP FNR a={alpha}')
+        # Sort allcop_set_sizes by alpha decreasing
+        allcop_set_sizes = dict(
+            sorted(allcop_set_sizes.items(),
+                   key=lambda item: item[0], reverse=True))
 
-        all_dfs = [mean_model_fnrs] + list(allcop_fnrs.values())
+        all_dfs = [mean_model_fnrs] + list(
+            allcop_fnrs.values()) + list(
+                allcop_set_sizes.values())
         allcop_fnrs_combined = pd.concat(all_dfs, axis=1)
 
         # Sort the combined DataFrame by the desired column
