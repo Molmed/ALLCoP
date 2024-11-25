@@ -84,7 +84,7 @@ class PredictionComparison(OutputDir):
 
         # How many empty model predictions?
         stats['model_empty_predictions'] = merged.apply(
-            lambda row: row['model_predicted_class'] == '',
+            lambda row: len(row['model_predicted_class'].strip()) < 1,
             axis=1
         ).sum()
 
@@ -102,6 +102,34 @@ class PredictionComparison(OutputDir):
                 lambda row: any(pred_class in row['known_class'].split(',') for pred_class in row[f'prediction_sets a={alpha}'].split(',')),
                 axis=1
             ).sum()
+
+            stats[f'alpha={alpha}_empty'] = merged.apply(
+                lambda row: len(row[f'prediction_sets a={alpha}'].strip()) < 1,
+                axis=1
+            ).sum()
+
+            # Get empty in %
+            stats[f'alpha={alpha}_empty_%'] = stats[f'alpha={alpha}_empty'] / stats['total_num_samples']
+
+            # How many sets contain single subtype?
+            stats[f'alpha={alpha}_single_subtype'] = merged.apply(
+                lambda row: len(
+                    row[f'prediction_sets a={alpha}'].strip()) > 0 and len(
+                        row[f'prediction_sets a={alpha}'].split(',')) == 1,
+                axis=1
+            ).sum()
+
+            # Get this in percent
+            stats[f'alpha={alpha}_single_subtype_%'] = stats[f'alpha={alpha}_single_subtype'] / stats['total_num_samples']
+
+            # How many contain two or more
+            stats[f'alpha={alpha}_two_or_more'] = merged.apply(
+                lambda row: len(row[f'prediction_sets a={alpha}'].split(',')) > 1,
+                axis=1
+            ).sum()
+
+            # Get this in percent
+            stats[f'alpha={alpha}_two_or_more_%'] = stats[f'alpha={alpha}_two_or_more'] / stats['total_num_samples']
 
             # How many incorrect?
             stats[f'alpha={alpha}_incorrect_or_empty'] = stats['total_num_samples'] - stats[f'alpha={alpha}_correct']
