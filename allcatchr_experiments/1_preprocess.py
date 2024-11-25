@@ -33,48 +33,33 @@ for dataset in DATASET_METADATA:
                                     subtypes_to_exclude=subtypes_to_exclude,
                                     pheno_file_path=pheno_file_path)
     dataframes.append(adp.df)
-exit()
 
-# # Merge the dataframes
-# merged_df = pd.concat(dataframes)
+# Merge the dataframes
+merged_df = pd.concat(dataframes)
 
-# # Report all items where the known_class is empty
-# print('Items with empty known_class:')
-# print(merged_df[merged_df['known_class'].isnull()])
+# Report all items where the known_class is empty
+print('Items with empty known_class:')
+print(merged_df[merged_df['known_class'].isnull()])
 
-# # Drop all rows where known_class is empty
-# merged_df = merged_df.dropna(subset=['known_class'])
+# Drop all rows where known_class is empty
+merged_df = merged_df.dropna(subset=['known_class'])
 
-# # Dump all items except empty known class to csv
-# print('All items with recognized subtype or B-other:')
-# print(merged_df)
-# merged_df.to_csv(FORMATTED_PREDICTIONS_FILE_ALL, index=False)
+# Report all items where known_class begins with "UNRECOGNIZED"
+print('Items with known_class beginning with UNRECOGNIZED:')
+unrecognized = merged_df[merged_df['known_class'].str.startswith('UNRECOGNIZED')]
+print(unrecognized)
+# Drop all rows where known_class begins with "UNRECOGNIZED"
+merged_df = merged_df[~merged_df['known_class'].str.startswith('UNRECOGNIZED')]
 
-# # Report all the multiclass items, this means known_class will contain comma
-# print('Items with multiple known subtypes:')
-# multiclass_items = merged_df[merged_df['known_class'].str.contains(',')]
-# print(multiclass_items)
+# Report all items where known_class is "B-other"
+print('Items with known_class as B-other:')
+b_others = merged_df[merged_df['known_class'] == 'B-other']
+print(b_others)
 
-# # Save the multiclass items
-# multiclass_items.to_csv(FORMATTED_PREDICTIONS_FILE_MULTICLASS,
-#                         index=False)
+# Remove b-others from merged_df
+merged_df = merged_df[merged_df['known_class'] != 'B-other']
 
-# # Remove multiclass items from merged_df
-# merged_df = merged_df[~merged_df['known_class'].str.contains(',')]
-
-# # Report all items where known_class is "B-other"
-# print('Items with known_class as B-other:')
-# b_others = merged_df[merged_df['known_class'] == 'B-other']
-# print(b_others)
-
-# # Save the b_others
-# b_others.to_csv(FORMATTED_PREDICTIONS_FILE_B_OTHER,
-#                 index=False)
-
-# # Remove b-others from merged_df
-# merged_df = merged_df[merged_df['known_class'] != 'B-other']
-
-# # Dump remaining to csv
-# print('Items with single known subtype:')
-# print(merged_df)
-# merged_df.to_csv(FORMATTED_PREDICTIONS_FILE_SINGLECLASS, index=False)
+# Dump all items except empty known class to csv
+print('All items with known and recognized subtype:')
+print(merged_df)
+merged_df.to_csv(FORMATTED_PREDICTIONS_FILE_ALL, index=False)

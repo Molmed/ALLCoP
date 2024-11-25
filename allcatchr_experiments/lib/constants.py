@@ -20,6 +20,6 @@ with open(f'{MAIN_LIB_DIR}/datasets.yml', 'r') as file:
     DATASET_METADATA = dm['datasets']
 
 FORMATTED_PREDICTIONS_FILE_ALL = \
-    os.path.join(DATA_DIR, 'formatted_predictions_all.csv')
+    os.path.join(DATA_DIR, 'formatted_predictions/formatted_predictions_all.csv')
 
-OUTPUT_DIR = os.path.join(script_dir, '../../output')
+OUTPUT_DIR = os.path.join(script_dir, '../../output/allcatchr')
