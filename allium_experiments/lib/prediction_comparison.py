@@ -312,6 +312,7 @@ class PredictionComparison(OutputDir):
             sns.heatmap(process_df(df_passing_threshold), annot=True, fmt='g', cmap=palettes[i_plt_row], ax=axs[i_plt_row][2])
             axs[i_plt_row][2].set_title(f'ALLIUM softmax >= {1 - alpha}', weight='bold')
             axs[i_plt_row][2].set_ylabel('')
+            axs[i_plt_row][2].collections[0].colorbar.remove()
 
             i_plt_row += 1
 
