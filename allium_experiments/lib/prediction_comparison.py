@@ -64,6 +64,59 @@ class PredictionComparison(OutputDir):
         # Rename predicted class to 'model_predicted_class'
         merged = merged.rename(columns={'predicted_class': 'model_predicted_class'})
 
+        # Fill NaN with empty string
+        merged = merged.fillna('')
+
+        # Gather statistics
+        stats = {}
+
+        # How many rows in total?
+        stats['total_num_samples'] = merged.shape[0]
+
+        # Model contains correct class in how many cases?
+        # Loop through rows, for each row, break up known_class into a list
+        # and check if model_predicted_class is in that list
+        stats['model_contains_correct_class'] = merged.apply(
+            lambda row:
+            row['model_predicted_class'] in row['known_class'].split(','),
+            axis=1
+        ).sum()
+
+        # How many empty model predictions?
+        stats['model_empty_predictions'] = merged.apply(
+            lambda row: row['model_predicted_class'] == '',
+            axis=1
+        ).sum()
+
+        stats['model_incorrect_not_empty'] = int(
+            stats['total_num_samples']-stats['model_contains_correct_class']-stats['model_empty_predictions'])
+
+        # How many incorrect or empty?
+        stats['model_incorrect_or_empty'] = int(
+            stats['total_num_samples']-stats['model_contains_correct_class'])
+
+        # For each alpha, how much was the error reduced?
+        # 'prediction_sets a={alpha}' is a comma separate string, so it should be searched
+        for alpha in self._alphas:
+            stats[f'alpha={alpha}_correct'] = merged.apply(
+                lambda row: row['known_class'] in row[f'prediction_sets a={alpha}'].split(','), axis=1
+            ).sum()
+
+            # How many incorrect?
+            stats[f'alpha={alpha}_incorrect_or_empty'] = stats['total_num_samples'] - stats[f'alpha={alpha}_correct']
+
+            # How many n cases fewer were incorrect?
+            stats[f'alpha={alpha}_error_reduction_n'] = stats['model_incorrect_or_empty'] - stats[f'alpha={alpha}_incorrect_or_empty']
+
+            # Mean set size
+            stats[f'alpha={alpha}_mean_set_size'] = merged[f'prediction_sets a={alpha}'].apply(
+                lambda x: len(x.split(',')) if x else 0).mean()
+
+        # Save the stats
+        with open(f'{self.output_dir}/prediction_set_comparison_stats.txt', 'w') as f:
+            for key, value in stats.items():
+                f.write(f'{key}: {value}\n')
+
         # Save the merged dataset
         merged.to_csv(f'{self.output_dir}/prediction_set_comparison.csv', index=False)
 
