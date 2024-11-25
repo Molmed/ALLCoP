@@ -26,6 +26,7 @@ class AllcatchrDataPreprocessor(PredictionDataPreprocessor):
                 return ""
             return x
 
+        known_class_df = None
         if pheno_file_path is not None:
             known_class_df = pd.read_csv(pheno_file_path, sep=';')
             # Rename subtype column to known_class
