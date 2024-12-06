@@ -39,7 +39,7 @@ asel.run()
 asel.run_reports()
 
 # Compare Allium and FNRCoP performance
-avaf = ModelVsCopFNR(apd_filtered, FNRCoP, OUTPUT_DIR, n_runs_per_alpha=10000)
+avaf = ModelVsCopFNR(apd_filtered, FNRCoP, OUTPUT_DIR, n_runs_per_alpha=1000)
 avaf.run()
 avaf.run_reports()
 
@@ -57,3 +57,4 @@ for ALPHA in ALPHAS:
     mcp = FNRCoP(apd_filtered, alpha=ALPHA)
     trial = mcp.do_validation_trial(n_runs=n_runs, val_proportion=0.1)
     trial.run_reports(OUTPUT_DIR_VALIDATION)
+    print(trial.mean_prediction_counts_by_class(trial.class_names, coocurring_only=True))

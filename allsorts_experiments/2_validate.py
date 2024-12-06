@@ -28,7 +28,19 @@ asel = AlphaSelector(apd,
 asel.run()
 asel.run_reports()
 
-# Compare Allium and FNRCoP performance
-avaf = ModelVsCopFNR(apd, FNRCoP, OUTPUT_DIR, n_runs_per_alpha=10000)
+# # Compare Allium and FNRCoP performance
+avaf = ModelVsCopFNR(apd, FNRCoP, OUTPUT_DIR, n_runs_per_alpha=1000)
 avaf.run()
 avaf.run_reports()
+
+ALPHAS = [0.075, 0.1, 0.15]
+n_runs = 1000
+
+for ALPHA in ALPHAS:
+    OUTPUT_DIR_VALIDATION = f'{OUTPUT_DIR}/validation_{ALPHA}'
+
+    # Validation trial and reports
+    mcp = FNRCoP(apd, alpha=ALPHA)
+    trial = mcp.do_validation_trial(n_runs=n_runs, val_proportion=0.2)
+    trial.run_reports(OUTPUT_DIR_VALIDATION)
+    print(trial.mean_prediction_counts_by_class(trial.class_names, coocurring_only=True))

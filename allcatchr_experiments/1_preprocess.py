@@ -3,6 +3,7 @@ import os
 from lib.allcatchr_data_preprocessor import AllcatchrDataPreprocessor
 from lib.constants import RAW_PREDICTIONS_DIR, \
     FORMATTED_PREDICTIONS_FILE_ALL, \
+    FORMATTED_PREDICTIONS_FILE_B_OTHER, \
     DATASET_METADATA, \
     PHENOTYPES_DIR
 
@@ -47,6 +48,14 @@ merged_df = merged_df[~merged_df['known_class'].str.startswith('UNRECOGNIZED')]
 merged_df = merged_df[merged_df['known_class'] != 'T-ALL']
 
 # Remove b-others from merged_df
+# Report all items where known_class is "B-other"
+print('Items with known_class as B-other:')
+b_others = merged_df[merged_df['known_class'] == 'B-other']
+print(b_others)
+
+# Save the b_others
+b_others.to_csv(FORMATTED_PREDICTIONS_FILE_B_OTHER,
+                index=False)
 merged_df = merged_df[merged_df['known_class'] != 'B-other']
 
 # Remove all excluded classes
