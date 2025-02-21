@@ -14,7 +14,7 @@ apd_singleclass = PredictionDataset(
     dataset_col_name='dataset')
 
 # Split the dataset into calibration and validation
-jude_dataset_name = 'St. Jude Cloud (SJC-DS-1001, SJC-DS-1009)'
+jude_dataset_name = 'SJC-DS-1009'
 calibration = apd_singleclass.df[
     apd_singleclass.df['dataset'] == jude_dataset_name]
 validation_singleclass = apd_singleclass.df[
